@@ -3,152 +3,194 @@ import pygame
 pygame.init()
 
 ###################################################################################
-def startGame(win, xCordOne,yCordOne,xCordTwo,yCordTwo):
+class Character:
+    def __init__(self, xCord, yCord, left, right, up, down):
+        self.xCord = xCord
+        self.yCord = yCord
+        self.left = False
+        self.right = False
+        self.up = False
+        self.down = False
+        self.width = 10
+        self.height = 10
+        self.vel = 5
+        self.collisions = False
+
+    def setX(self, xCord): self.xCord = xCord
+
+    def setY(self, yCord): self.yCord = yCord
+
+    def setLeft(self, left): self.left = left
+
+    def setRight(self, right): self.right = right
+
+    def setUp(self, up): self.up = up
+
+    def setDown(self, down): self.down = down
+
+    def getX(self): return self.xCord
+
+    def getY(self): return self.yCord
+
+    def getLeft(self): return self.left
+
+    def getRight(self): return self.right
+
+    def getWidth(self): return self.width
+
+    def getHeight(self): return self.height
+
+    def getVel(self): return self.vel
+
+    def setDir(self, left, right, up, down):
+        self.left = left
+        self.right = right
+        self.up = up
+        self.down = down
+
+    def updateCords(self, screenWidth, screenHeight):
+        if bool(self.left):
+            self.xCord -= self.vel
+            if self.xCord < 20: self.xCord = screenWidth - 20
+        if bool(self.right):
+            self.xCord += self.vel
+            if self.xCord > screenWidth - 20: self.xCord = 20
+        if bool(self.up):
+            self.yCord -= self.vel 
+            if self.yCord < 20: self.yCord = screenHeight - 20
+        if bool(self.down):
+            self.yCord += self.vel
+            if self.yCord > screenHeight - 20: self.yCord = 20
+
+    def checkCollision(self, win):
+        if bool(self.left):
+            if win.get_at((self.getX(), self.getY() + self.height/2)) == (0, 255, 0) or win.get_at((self.getX(), self.getY() + self.height/2)) == (255, 0, 0):
+                self.collisions = True
+                return True
+        if bool(self.right):
+            if win.get_at((self.getX() + self.width, self.getY() + self.height/2)) == (0, 255, 0) or win.get_at((self.getX() + self.width, self.getY() + self.height/2)) == (255, 0, 0):
+                self.collisions = True
+                return True
+        if bool(self.up):
+            if win.get_at((self.getX() + self.width/2, self.getY())) == (0, 255, 0) or win.get_at((self.getX() + self.width/2, self.getY())) == (255, 0, 0):
+                self.collisions = True
+                return True
+        if bool(self.down):
+            if win.get_at((self.getX() + self.width/2, self.getY() + self.height)) == (0, 255, 0) or win.get_at((self.getX() +self.width/2, self.getY() + self.height)) == (255, 0, 0):
+                self.collisions = True
+                return True
+        
+        return False
+
+###################################################################################
+'''def startGame(win, charOne, charTwo):
     pygame.draw.rect(win, (0,0,0), (0,0,500,500))
-    pygame.draw.rect(win, (255,0,0), (xCordOne, yCordOne, 10, 10))
-    pygame.draw.rect(win, (0,255,0), (xCordTwo, yCordTwo, 10, 10))
+    pygame.draw.rect(win, (255, 0, 0), (charOne.getX(), charOne.getY(), charOne.getWidth(), charOne.getHeight())
+    pygame.draw.rect(win, (255, 0, 0), (charTwo.getX(), charTwo.getY(), charTwo.getWidth(), charTwo.getHeight())
     #pygame.display.update()
+'''
+
+def test(self, win):
+    if win.get_at((self.getX() + self.width/2, self.getY() + self.height/2)) == (0, 255, 0) or win.get_at((self.getX() + self.width/2, self.getY() + self.height/2)) == (255, 0, 0):
+        return True
+    '''
+    if bool(self.left):
+        if win.get_at((self.getX() + self.width/2, self.getY() + self.height/2)) == (0, 255, 0) or win.get_at((self.getX() + self.width/2, self.getY() + self.height/2)) == (255, 0, 0):
+            return True
+    if bool(self.right):
+        if win.get_at((self.getX() + self.width/2, self.getY() + self.height/2)) == (0, 255, 0) or win.get_at((self.getX() + self.width/2, self.getY() + self.height/2)) == (255, 0, 0):
+            return True
+    if bool(self.up):
+        if win.get_at((charOne.getX() + self.width/2,charOne.getY())) == (0, 255, 0) or win.get_at((charOne.getX() + self.width/2, charOne.getY() + self.height/2)) == (255, 0, 0):
+            return True
+    if bool(self.down):
+        if win.get_at((charOne.getX() + self.width/2,charOne.getY() + self.height)) == (0, 255, 0) or win.get_at((charOne.getX() + self.width/2,charOne.getY() + self.heigth)) == (255, 0, 0):
+            return True
+    '''
+    return False
+   
 
 ###################################################################################
 def main():
     screenWidth = 1000
-    screenHeight = 1000
+    screenHeight = 700
+    oneStartX = 50
+    oneStartY = 50
+    twoStartX = screenWidth - 50
+    twoStartY = screenHeight - 50
+    delayTime = 20 #this is in miliseconds = .02 seconds
 
     win = pygame.display.set_mode((screenWidth,screenHeight)) #width and height
-    pygame.display.set_caption("Python Solver")
+    pygame.display.set_caption("Tubes")
 
     #top left = 0,0 
     #top right = 500,0
     #bottom right = 500,500
     #python = row,col
-    xCordOne = 50
-    yCordOne = 50 
-    xCordTwo = 400
-    yCordTwo = 400
+    charOne = Character(oneStartX, oneStartY, False, False, False, False)
+    charTwo = Character(twoStartX, twoStartY, False, False, False, False)
 
-    charWidth = 10
-    charHeight = 10
-    vel = 3
+    #startGame(win, charOne, charTwo)
 
-    leftOne = False
-    rightOne = False
-    upOne = False
-    downOne = False 
-
-    leftTwo = False
-    rightTwo = False
-    upTwo = False
-    downTwo = False
-
-    startGame(win, 50,50,400,400)
-
-    inGame = True
     run = True
+    gameOn = True
     while run:
-        pygame.time.delay(20) #100 = 0.1 secons and 1000 = 1 second
+        pygame.time.delay(delayTime) #100 = 0.1 secons and 1000 = 1 second
     
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
             
         
-        keysOne = pygame.key.get_pressed()
+        keys = pygame.key.get_pressed()
+        if bool(gameOn):
+            if keys[pygame.K_LEFT]:
+                charOne.setDir(True, False, False, False)
+            if keys[pygame.K_RIGHT]:
+                charOne.setDir(False, True, False, False)
+            if keys[pygame.K_UP]:
+                charOne.setDir(False, False, True, False)
+            if keys[pygame.K_DOWN]:
+                charOne.setDir(False, False, False, True)
+            if keys[pygame.K_a]:
+                charTwo.setDir(True, False, False, False)
+            if keys[pygame.K_d]:
+                charTwo.setDir(False, True, False, False)
+            if keys[pygame.K_w]:
+                charTwo.setDir(False, False, True, False)
+            if keys[pygame.K_s]:
+                charTwo.setDir(False, False, False, True)
 
-        if keysOne[pygame.K_LEFT]:
-            leftOne = True
-            rightOne = False
-            upOne = False
-            downOne = False
-        if keysOne[pygame.K_RIGHT]:
-            leftOne = False
-            rightOne = True
-            upOne = False
-            downOne = False
-        if keysOne[pygame.K_UP]:
-            leftOne = False
-            rightOne = False
-            upOne = True
-            downOne = False
-        if keysOne[pygame.K_DOWN]:
-            leftOne = False
-            rightOne = False
-            upOne = False
-            downOne = True
-
-        keysTwo = pygame.key.get_pressed()
-
-        if keysTwo[pygame.K_a]:
-            leftTwo = True
-            rightTwo = False
-            upTwo = False
-            downTwo = False
-        if keysOne[pygame.K_d]:
-            leftTwo = False
-            rightTwo = True
-            upTwo = False
-            downTwo = False
-        if keysOne[pygame.K_w]:
-            leftTwo = False
-            rightTwo = False
-            upTwo = True
-            downTwo = False
-        if keysOne[pygame.K_s]:
-            leftTwo = False
-            rightTwo = False
-            upTwo = False
-            downTwo = True
-
-        if bool(leftOne):
-            xCordOne -= vel
-            if xCordOne < 10: xCordOne = 980
-        if bool(rightOne):
-            xCordOne += vel
-            if xCordOne > 980: xCordOne = 10
-        if bool(upOne):
-            yCordOne -= vel 
-            if yCordOne < 10: yCordOne = 980
-        if bool(downOne):
-            yCordOne += vel
-            if yCordOne > 980: yCordOne = 10
-
-        if bool(leftTwo):
-            xCordTwo -= vel
-            if xCordTwo < 10: xCordTwo = 980
-        if bool(rightTwo):
-            xCordTwo += vel
-            if xCordTwo > 980: xCordTwo = 10
-        if bool(upTwo):
-            yCordTwo -= vel 
-            if yCordTwo < 10: yCordTwo = 980
-        if bool(downTwo):
-            yCordTwo += vel
-            if yCordTwo > 980: yCordTwo = 10
-
-       
-        if win.get_at((xCordOne+11,yCordOne+11)) == (0, 255, 0):
-            pygame.draw.rect(win, (0,255,0), (0, 0, 500, 500))
+        charOne.updateCords(screenWidth, screenHeight)
+        charTwo.updateCords(screenWidth, screenHeight)
+        
+        if bool(charOne.checkCollision(win) and gameOn):
+            pygame.draw.rect(win, (0,255,0), (0, 0, screenWidth, screenHeight))
+            gameOn = False
+        elif bool(charTwo.checkCollision(win) and gameOn):
+            pygame.draw.rect(win, (255,0,0), (0, 0, screenWidth, screenHeight))
+            gameOn = False
         else:
-            pygame.draw.rect(win, (255,0,0), (xCordOne, yCordOne, charWidth, charHeight))
+            pygame.draw.rect(win, (0,255,0), (charTwo.getX(), charTwo.getY(), charTwo.getWidth(), charTwo.getHeight()))
+            pygame.draw.rect(win, (255,0,0), (charOne.getX(), charOne.getY(), charOne.getWidth(), charOne.getHeight()))
+        
+        if not bool(gameOn):
+            charOne.setDir(False, False, False, False)
+            charTwo.setDir(False, False, False, False)
 
-        if win.get_at((xCordTwo+11,yCordTwo+11)) == (255,0,0):
-            pygame.draw.rect(win, (255,0,0), (0, 0, 500, 500))
-        else:
-            pygame.draw.rect(win, (0,255,0), (xCordTwo, yCordTwo, charWidth, charHeight))
+        if keys[pygame.K_SPACE]:
+            pygame.draw.rect(win, (0,0,0), (0,0,screenWidth, screenHeight))
+            pygame.draw.rect(win, (255, 0, 0), (oneStartX, oneStartY, charOne.getWidth(), charOne.getHeight()))
+            pygame.draw.rect(win, (0, 255, 0), (twoStartX, twoStartY, charTwo.getWidth(), charTwo.getHeight()))
+            gameOn = True
+            charOne.setX(oneStartX)
+            charOne.setY(oneStartY)
+            
 
-        if keysOne[pygame.K_SPACE]:
-            startGame(win,50,50,400,400)
-            xCordOne = 50
-            yCordOne = 50 
-            xCordTwo = 400
-            yCordTwo = 400
-            leftOne = False
-            rightOne = False
-            upOne = False
-            downOne = False
-            leftTwo = False
-            rightTwo = False
-            upTwo = False
-            downTwo = False
+            charTwo.setX(twoStartX)
+            charTwo.setY(twoStartY)
+            
+        #pygame.draw.rect(win, (255,0,0), (charOne.getX(), charOne.getY(), charOne.getWidth(), charOne.getHeight()))
         pygame.display.update()
 
 ###################################################################################
@@ -156,4 +198,3 @@ def main():
 main()
 
 pygame.quit()
-
